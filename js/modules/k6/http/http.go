@@ -191,6 +191,9 @@ func (*HTTP) request(ctx context.Context, rt *goja.Runtime, state *common.State,
 		Timeout:   timeout,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			max := int(state.Options.MaxRedirects.Int64)
+			if max == 0 {
+				return http.ErrUseLastResponse
+			}
 			if len(via) >= max {
 				return errors.Errorf("stopped after %d redirects", max)
 			}
